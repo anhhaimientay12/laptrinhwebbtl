@@ -359,7 +359,7 @@ textarea { resize: vertical; min-height: 90px; }
 
 <?php
 $currentUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$basePath   = parse_url(BASE_URL, PHP_URL_PATH);
+$basePath   = parse_url(BASE_URL, PHP_URL_PATH) ?? '';
 $path       = str_replace($basePath, '', $currentUri);
 $path       = '/' . ltrim($path, '/');
 

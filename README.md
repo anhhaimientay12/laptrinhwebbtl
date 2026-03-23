@@ -417,9 +417,10 @@ sudo systemctl restart apache2
 URL: http://localhost/edumanager
 
 Tài khoản mặc định:
-  Admin     : admin@school.edu    / admin123
-  Giảng viên: gv001@school.edu   / gv123
-  Sinh viên : sv001@school.edu   / sv123
+  Admin     : admin   / password
+  Giảng viên: gv001   / password
+  Sinh viên 1 : sv2021001   / password
+  Sinh viên 2 : sv2021002   / password
 ```
 
 ---
