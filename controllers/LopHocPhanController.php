@@ -3,6 +3,8 @@
 require_once BASE_PATH . '/models/LopHocPhanModel.php';
 require_once BASE_PATH . '/models/MonHocModel.php';
 require_once BASE_PATH . '/models/GiangVienModel.php';
+require_once BASE_PATH . '/models/DangKyModel.php';
+require_once BASE_PATH . '/models/SinhVienModel.php';
 
 class LopHocPhanController extends Controller {
     private LopHocPhanModel $model;
@@ -73,5 +75,98 @@ class LopHocPhanController extends Controller {
         $this->model->delete($id);
         $this->flash('success', 'Xóa lớp học phần thành công!');
         $this->redirect('/lop-hoc-phan');
+    }
+
+    /** [ADMIN] Xem danh sách sinh viên trong lớp */
+    public function students(string $maLop): void {
+        $this->requireAdmin();
+        $lop = $this->model->getDetail($maLop);
+        if (!$lop) { $this->flash('error', 'Không tìm thấy lớp.'); $this->redirect('/lop-hoc-phan'); }
+        
+        $dkModel = new DangKyModel();
+        $students = $dkModel->getByLop($maLop);
+        
+        $this->view('lop_hoc_phan/students', [
+            'title'     => 'Quản lý sinh viên',
+            'pageTitle' => 'Danh sách sinh viên — ' . $maLop,
+            'lop'       => $lop,
+            'students'  => $students
+        ]);
+    }
+
+    /** [ADMIN] Thêm sinh viên vào lớp */
+    public function addStudent(string $maLop): void {
+        $this->requireAdmin();
+        $maSv = strtoupper($this->post('ma_sv'));
+        
+        if (empty($maSv)) {
+            $this->flash('error', 'Vui lòng nhập mã sinh viên.');
+            $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
+        }
+
+        $svModel = new SinhVienModel();
+        if (!$svModel->exists('ma_sv', $maSv)) {
+            $this->flash('error', 'Sinh viên không tồn tại.');
+            $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
+        }
+
+        $dkModel = new DangKyModel();
+        
+        // 1. Kiểm tra đã có trong lớp chưa
+        if ($dkModel->isRegistered($maSv, $maLop)) {
+            $this->flash('error', 'Sinh viên này đã có trong lớp.');
+            $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
+        }
+
+        // 2. Kiểm tra trùng môn (trong cùng học kỳ)
+        if ($dkModel->checkSubjectDuplicate($maSv, $maLop)) {
+            $this->flash('error', 'Sinh viên đã đăng ký một lớp khác của môn học này.');
+            $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
+        }
+
+        // 3. Kiểm tra trùng lịch học
+        $conflictLop = $dkModel->checkScheduleConflict($maSv, $maLop);
+        if ($conflictLop) {
+            $this->flash('error', "Trùng lịch học với lớp $conflictLop.");
+            $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
+        }
+
+        // 4. Kiểm tra tổng tín chỉ (Max 20)
+        $newLopInfo = $dkModel->getSubjectByLop($maLop);
+        $currentCredits = $dkModel->getTotalCredits($maSv, $newLopInfo['hoc_ky'], $newLopInfo['nam_hoc']);
+        if ($currentCredits + $newLopInfo['tin_chi'] > 20) {
+            $this->flash('error', "Tổng tín chỉ vượt quá 20 TC (Hiện tại: $currentCredits).");
+            $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
+        }
+
+        // Kiểm tra sĩ số
+        $lop = $this->model->getById($maLop);
+        if ($lop['si_so_hien'] >= $lop['si_so_max']) {
+            $this->flash('error', 'Lớp đã đầy.');
+            $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
+        }
+
+        if ($dkModel->register($maSv, $maLop)) {
+            $this->flash('success', 'Thêm sinh viên thành công!');
+        } else {
+            $this->flash('error', 'Lỗi khi thêm sinh viên.');
+        }
+        $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
+    }
+
+    /** [ADMIN] Xóa sinh viên khỏi lớp */
+    public function removeStudent(string $id): void {
+        $this->requireAdmin();
+        $dkModel = new DangKyModel();
+        $dk = $dkModel->getById($id);
+        if (!$dk) { $this->flash('error', 'Không tìm thấy bản ghi đăng ký.'); $this->redirect('/lop-hoc-phan'); }
+        
+        $maLop = $dk['ma_lop'];
+        if ($dkModel->unregister($id)) {
+            $this->flash('success', 'Đã xóa sinh viên khỏi lớp.');
+        } else {
+            $this->flash('error', 'Lỗi khi xóa sinh viên.');
+        }
+        $this->redirect('/lop-hoc-phan/sinh-vien/' . $maLop);
     }
 }

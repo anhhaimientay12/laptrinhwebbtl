@@ -38,6 +38,9 @@
           </td>
           <td>
             <div style="display:flex;gap:6px;justify-content:flex-end">
+              <?php if (($_SESSION['user']['role'] ?? '') === 'admin'): ?>
+              <a href="<?= BASE_URL ?>/lop-hoc-phan/sinh-vien/<?= urlencode($l['ma_lop']) ?>" class="btn btn-secondary btn-sm btn-icon" title="Quản lý sinh viên"><i class="fas fa-users"></i></a>
+              <?php endif; ?>
               <a href="<?= BASE_URL ?>/diem-so/lop/<?= urlencode($l['ma_lop']) ?>" class="btn btn-secondary btn-sm btn-icon" title="Bảng điểm"><i class="fas fa-star-half-stroke"></i></a>
               <?php if (($_SESSION['user']['role'] ?? '') === 'admin'): ?>
               <a href="<?= BASE_URL ?>/lop-hoc-phan/edit/<?= urlencode($l['ma_lop']) ?>" class="btn btn-secondary btn-sm btn-icon"><i class="fas fa-pencil"></i></a>

@@ -70,6 +70,9 @@
 - Mở / đóng đợt đăng ký theo học kỳ
 - Giới hạn sĩ số lớp học phần
 - Hủy / thêm môn trong thời gian quy định
+- Sinh viên được phép tự đăng ký môn học đã mở
+- Admin có thể  quản lý danh sách sinh viên trong lớp học phần
+- Cảnh báo khi đăng ký trùng môn học, thời gian, tổng tín chỉ nhiều hơn 20
 
 ### 📊 Quản Lý Điểm
 - Nhập điểm thành phần (CC, GK, CK)

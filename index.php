@@ -75,10 +75,19 @@ $router->post('/lop-hoc-phan/store',      'LopHocPhanController', 'store');
 $router->get('/lop-hoc-phan/edit/:id',    'LopHocPhanController', 'edit');
 $router->post('/lop-hoc-phan/update/:id', 'LopHocPhanController', 'update');
 $router->get('/lop-hoc-phan/delete/:id',  'LopHocPhanController', 'delete');
+$router->get('/lop-hoc-phan/sinh-vien/:maLop',       'LopHocPhanController', 'students');
+$router->post('/lop-hoc-phan/sinh-vien/add/:maLop',  'LopHocPhanController', 'addStudent');
+$router->get('/lop-hoc-phan/sinh-vien/remove/:id',   'LopHocPhanController', 'removeStudent');
 
 // Điểm số
 $router->get('/diem-so',                  'DiemSoController', 'index');
 $router->get('/diem-so/lop/:maLop',       'DiemSoController', 'byLop');
 $router->post('/diem-so/nhap/:maLop',     'DiemSoController', 'nhap');
+
+// Đăng ký học phần
+$router->get('/dang-ky',                  'DangKyController', 'index');
+$router->get('/dang-ky/moi',              'DangKyController', 'create');
+$router->post('/dang-ky/store',           'DangKyController', 'store');
+$router->get('/dang-ky/huy/:id',          'DangKyController', 'delete');
 
 $router->dispatch();
