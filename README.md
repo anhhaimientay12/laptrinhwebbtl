@@ -511,13 +511,6 @@ edumanager/
 4. Push: `git push origin feature/ten-tinh-nang`
 5. Tạo Pull Request
 
----
-
-## 📄 Giấy Phép
-
-Dự án được phân phối dưới giấy phép [MIT](LICENSE).
-
----
 
 <div align="center">
 Made by D24TXCN01-B
