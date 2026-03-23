@@ -110,6 +110,8 @@ label {
   position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
   color: #475569; cursor: pointer; font-size: 14px;
   transition: color .2s;
+  width: 44px;
+  height: 100%;
 }
 .input-wrap .toggle-pw:hover { color: #94a3b8; }
 
