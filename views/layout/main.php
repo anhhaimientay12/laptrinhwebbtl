@@ -407,6 +407,13 @@ $initials = implode('', array_map(fn($w) => mb_strtoupper(mb_substr($w, 0, 1)),
     <a href="<?= BASE_URL ?>/diem-so" class="nav-item <?= navActive('/diem-so', $path) ?>">
       <i class="fas fa-star-half-stroke"></i> Điểm số
     </a>
+
+    <?php if (($_SESSION['user']['role'] ?? '') === 'sinh_vien'): ?>
+    <div class="nav-section-title">Sinh viên</div>
+    <a href="<?= BASE_URL ?>/dang-ky" class="nav-item <?= navActive('/dang-ky', $path) ?>">
+      <i class="fas fa-file-signature"></i> Đăng ký học phần
+    </a>
+    <?php endif; ?>
   </nav>
 
   <div class="sidebar-footer">

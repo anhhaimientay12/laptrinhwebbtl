@@ -54,4 +54,8 @@ class SinhVienModel extends Model {
             GROUP BY k.ma_khoa, k.ten_khoa
             ORDER BY so_luong DESC");
     }
+
+    public function getByUserId(int $userId): ?array {
+        return $this->db->fetchOne("SELECT * FROM sinh_vien WHERE user_id = ?", [$userId]);
+    }
 }
