@@ -520,5 +520,5 @@ Dự án được phân phối dưới giấy phép [MIT](LICENSE).
 ---
 
 <div align="center">
-Made with ❤️ for Vietnamese Universities
+Made by D24TXCN01-B
 </div>
