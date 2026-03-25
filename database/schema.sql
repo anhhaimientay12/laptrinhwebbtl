@@ -124,6 +124,7 @@ CREATE TABLE diem_so (
 CREATE TABLE lich_hoc (
     id             INT AUTO_INCREMENT PRIMARY KEY,
     ma_lop         VARCHAR(20)  NOT NULL,
+    ma_gv          VARCHAR(10)  DEFAULT NULL,
     thu            TINYINT      NOT NULL COMMENT '2=Thứ 2, 3=Thứ 3,..., 8=Chủ nhật',
     tiet_bat_dau   TINYINT      NOT NULL COMMENT 'Tiết bắt đầu (1-12)',
     so_tiet        TINYINT      NOT NULL DEFAULT 2 COMMENT 'Số tiết học',
