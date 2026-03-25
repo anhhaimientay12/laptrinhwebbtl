@@ -408,8 +408,30 @@ $initials = implode('', array_map(fn($w) => mb_strtoupper(mb_substr($w, 0, 1)),
       <i class="fas fa-star-half-stroke"></i> Điểm số
     </a>
 
-    <?php if (($_SESSION['user']['role'] ?? '') === 'sinh_vien'): ?>
-    <div class="nav-section-title">Sinh viên</div>
+        <!-- Thời khóa biểu theo role -->
+    <?php 
+    $role = $_SESSION['user']['role'] ?? '';
+    if (in_array($role, ['sinh_vien', 'giang_vien', 'admin'])): 
+    ?>
+    <div class="nav-section-title">
+        <?php 
+        if ($role === 'sinh_vien') echo 'Sinh viên';
+        elseif ($role === 'giang_vien') echo 'Giảng viên';
+        else echo 'Hệ thống';
+        ?>
+    </div>
+    <a href="<?= BASE_URL ?>/thoi-khoa-bieu" class="nav-item <?= navActive('/thoi-khoa-bieu', $path) ?>">
+        <i class="fas fa-calendar-alt"></i> 
+        <?php 
+        if ($role === 'sinh_vien') echo 'Thời khóa biểu';
+        elseif ($role === 'giang_vien') echo 'Lịch giảng dạy';
+        else echo 'Quản lý lịch học';
+        ?>
+    </a>
+    <?php endif; ?>
+
+    <!-- Menu đăng ký học phần (chỉ sinh viên) -->
+    <?php if ($role === 'sinh_vien'): ?>
     <a href="<?= BASE_URL ?>/dang-ky" class="nav-item <?= navActive('/dang-ky', $path) ?>">
       <i class="fas fa-file-signature"></i> Đăng ký học phần
     </a>
