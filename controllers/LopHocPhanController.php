@@ -28,12 +28,12 @@ class LopHocPhanController extends Controller {
             'danhSachGV'  => (new GiangVienModel())->getAll('ho_ten ASC')]);
     }
 
-    public function store(): void {
+        public function store(): void {
         $this->requireAdmin();
         $data = ['ma_lop' => strtoupper($this->post('ma_lop')), 'ma_mon' => $this->post('ma_mon'),
             'ma_gv' => $this->post('ma_gv') ?: null, 'hoc_ky' => $this->post('hoc_ky'),
             'nam_hoc' => $this->post('nam_hoc'), 'si_so_max' => (int)$this->post('si_so_max', 40),
-            'phong_hoc' => $this->post('phong_hoc'), 'lich_hoc' => $this->post('lich_hoc'),
+            'phong_hoc' => $this->post('phong_hoc'), 'lich_hoc' => '',
             'trang_thai' => $this->post('trang_thai', 'mo')];
         $errors = $this->validate($data, ['ma_lop' => 'required', 'ma_mon' => 'required', 'hoc_ky' => 'required', 'nam_hoc' => 'required']);
         if (!$errors && $this->model->exists('ma_lop', $data['ma_lop'])) $errors['ma_lop'] = 'Mã lớp đã tồn tại.';
@@ -44,7 +44,16 @@ class LopHocPhanController extends Controller {
                 'danhSachGV'  => (new GiangVienModel())->getAll('ho_ten ASC')]);
             return;
         }
+        
+        // Insert lớp học phần
         $this->model->insert($data);
+        
+        // Xử lý lịch học từ form
+        $lich_hoc_array = $this->post('lich_hoc');
+        if (!empty($lich_hoc_array) && is_array($lich_hoc_array)) {
+            $this->model->themLichHoc($data['ma_lop'], $data['ma_gv'], $lich_hoc_array);
+        }
+        
         $this->flash('success', 'Thêm lớp học phần thành công!');
         $this->redirect('/lop-hoc-phan');
     }
@@ -59,13 +68,21 @@ class LopHocPhanController extends Controller {
             'danhSachGV'  => (new GiangVienModel())->getAll('ho_ten ASC')]);
     }
 
-    public function update(string $id): void {
+        public function update(string $id): void {
         $this->requireAdmin();
         $data = ['ma_mon' => $this->post('ma_mon'), 'ma_gv' => $this->post('ma_gv') ?: null,
             'hoc_ky' => $this->post('hoc_ky'), 'nam_hoc' => $this->post('nam_hoc'),
             'si_so_max' => (int)$this->post('si_so_max', 40), 'phong_hoc' => $this->post('phong_hoc'),
-            'lich_hoc' => $this->post('lich_hoc'), 'trang_thai' => $this->post('trang_thai', 'mo')];
+            'lich_hoc' => '', 'trang_thai' => $this->post('trang_thai', 'mo')];
+        
         $this->model->update($id, $data);
+        
+        // Xử lý lịch học từ form
+        $lich_hoc_array = $this->post('lich_hoc');
+        if (!empty($lich_hoc_array) && is_array($lich_hoc_array)) {
+            $this->model->themLichHoc($id, $data['ma_gv'], $lich_hoc_array);
+        }
+        
         $this->flash('success', 'Cập nhật lớp học phần thành công!');
         $this->redirect('/lop-hoc-phan');
     }
