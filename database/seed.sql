@@ -42,3 +42,9 @@ INSERT INTO lop_hoc_phan (ma_lop, ma_mon, ma_gv, hoc_ky, nam_hoc, si_so_max, pho
 ('COMP101-01', 'COMP101', 'GV001', 'HK1', '2024-2025', 40, 'P201', 'T2-T4 (7h30-9h30)'),
 ('COMP301-01', 'COMP301', 'GV001', 'HK1', '2024-2025', 35, 'P301', 'T3-T5 (9h45-11h45)'),
 ('MATH101-01', 'MATH101', 'GV002', 'HK1', '2024-2025', 50, 'P101', 'T2-T6 (13h-15h)');
+-- Lịch học 
+INSERT INTO `lich_hoc` (`id`, `ma_lop`, `ma_gv`, `thu`, `tiet_bat_dau`, `so_tiet`, `phong_hoc`, `tuan_bat_dau`, `tuan_ket_thuc`, `created_at`) VALUES
+(1, 'COMP101-01', 'GV001', 2, 1, 15, 'P201', 1, 15, '2026-03-24 19:32:49'),
+(2, 'COMP101-01', 'GV001', 4, 1, 15, 'P201', 1, 15, '2026-03-24 19:33:56'),
+(4, 'MATH101-01', 'GV002', 2, 3, 15, 'P101', 1, 15, '2026-03-24 19:57:43'),
+(5, 'MATH101-01', 'GV002', 6, 3, 15, 'P101', 1, 15, '2026-03-24 19:58:09');
