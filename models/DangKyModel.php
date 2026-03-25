@@ -90,24 +90,60 @@ class DangKyModel extends Model {
         return (int)($row['c'] ?? 0) > 0;
     }
 
-    /** Kiểm tra trùng lịch học */
+       /**
+     * Kiểm tra trùng lịch học (dùng bảng lich_hoc)
+     */
     public function checkScheduleConflict(string $maSv, string $maLop): ?string {
-        $newLop = $this->db->fetchOne("SELECT lich_hoc, hoc_ky, nam_hoc FROM lop_hoc_phan WHERE ma_lop = ?", [$maLop]);
-        if (!$newLop || empty($newLop['lich_hoc'])) return null;
-
-        $sql = "SELECT lop.ma_lop, lop.lich_hoc 
-                FROM dang_ky dk
-                JOIN lop_hoc_phan lop ON lop.ma_lop = dk.ma_lop
-                WHERE dk.ma_sv = ? 
-                  AND lop.hoc_ky = ? 
-                  AND lop.nam_hoc = ? 
-                  AND lop.lich_hoc = ? 
-                  AND dk.ma_lop != ?";
-        $conflict = $this->db->fetchOne($sql, [
-            $maSv, $newLop['hoc_ky'], $newLop['nam_hoc'], $newLop['lich_hoc'], $maLop
-        ]);
+        // Lấy thông tin lớp mới
+        $lopMoi = $this->db->fetchOne("SELECT hoc_ky, nam_hoc FROM lop_hoc_phan WHERE ma_lop = ?", [$maLop]);
+        if (!$lopMoi) return null;
         
-        return $conflict['ma_lop'] ?? null;
+        // Lấy tất cả lịch của lớp mới
+        $lichMoi = $this->db->fetchAll("SELECT * FROM lich_hoc WHERE ma_lop = ?", [$maLop]);
+        if (empty($lichMoi)) return null;
+        
+        // Lấy tất cả lớp đã đăng ký của sinh viên trong cùng học kỳ
+        $cacLopDaDk = $this->db->fetchAll("
+            SELECT dk.ma_lop FROM dang_ky dk
+            JOIN lop_hoc_phan lhp ON lhp.ma_lop = dk.ma_lop
+            WHERE dk.ma_sv = ? AND dk.trang_thai = 'dang_ky'
+              AND lhp.hoc_ky = ? AND lhp.nam_hoc = ?",
+            [$maSv, $lopMoi['hoc_ky'], $lopMoi['nam_hoc']]
+        );
+        
+        foreach ($cacLopDaDk as $lopDaDk) {
+            $lichCu = $this->db->fetchAll("SELECT * FROM lich_hoc WHERE ma_lop = ?", [$lopDaDk['ma_lop']]);
+            foreach ($lichMoi as $lm) {
+                foreach ($lichCu as $lc) {
+                    if ($this->isConflict($lm, $lc)) {
+                        return $lopDaDk['ma_lop'];
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Kiểm tra xung đột giữa 2 lịch học
+     */
+    private function isConflict($lich1, $lich2): bool {
+        // Khác thứ thì không xung đột
+        if ($lich1['thu'] != $lich2['thu']) return false;
+        
+        // Tính khoảng tiết học
+        $start1 = $lich1['tiet_bat_dau'];
+        $end1 = $start1 + $lich1['so_tiet'] - 1;
+        $start2 = $lich2['tiet_bat_dau'];
+        $end2 = $start2 + $lich2['so_tiet'] - 1;
+        
+        // Kiểm tra trùng giờ
+        if ($end1 < $start2 || $end2 < $start1) return false;
+        
+        // Kiểm tra trùng phòng
+        if ($lich1['phong_hoc'] === $lich2['phong_hoc']) return true;
+        
+        return false;
     }
 
     /** Lấy tổng số tín chỉ hiện tại của sinh viên */
