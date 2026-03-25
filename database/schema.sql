@@ -120,3 +120,29 @@ CREATE TABLE diem_so (
     FOREIGN KEY (ma_sv)  REFERENCES sinh_vien(ma_sv) ON DELETE CASCADE,
     FOREIGN KEY (ma_lop) REFERENCES lop_hoc_phan(ma_lop) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+-- Bảng Lịch học (chi tiết)
+CREATE TABLE lich_hoc (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    ma_lop         VARCHAR(20)  NOT NULL,
+    thu            TINYINT      NOT NULL COMMENT '2=Thứ 2, 3=Thứ 3,..., 8=Chủ nhật',
+    tiet_bat_dau   TINYINT      NOT NULL COMMENT 'Tiết bắt đầu (1-12)',
+    so_tiet        TINYINT      NOT NULL DEFAULT 2 COMMENT 'Số tiết học',
+    phong_hoc      VARCHAR(20)  NOT NULL,
+    tuan_bat_dau   INT          DEFAULT 1 COMMENT 'Tuần bắt đầu (1-15)',
+    tuan_ket_thuc  INT          DEFAULT 15 COMMENT 'Tuần kết thúc',
+    created_at     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ma_lop) REFERENCES lop_hoc_phan(ma_lop) ON DELETE CASCADE,
+    INDEX idx_lich (thu, tiet_bat_dau, phong_hoc)
+) ENGINE=InnoDB;
+
+-- Bảng cấu hình học kỳ (quản lý thời gian đăng ký, tuần học)
+CREATE TABLE hoc_ky_config (
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    hoc_ky        VARCHAR(10)  NOT NULL,
+    nam_hoc       VARCHAR(9)   NOT NULL,
+    ngay_bat_dau  DATE         NOT NULL COMMENT 'Ngày bắt đầu học kỳ',
+    ngay_ket_thuc DATE         NOT NULL COMMENT 'Ngày kết thúc học kỳ',
+    tuan_hoc      INT          DEFAULT 15 COMMENT 'Số tuần học',
+    trang_thai    ENUM('chuan_bi','dang_dien_ra','ket_thuc') DEFAULT 'chuan_bi',
+    UNIQUE KEY uq_hocky (hoc_ky, nam_hoc)
+) ENGINE=InnoDB;
