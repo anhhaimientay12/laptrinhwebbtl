@@ -89,5 +89,5 @@ $router->get('/dang-ky',                  'DangKyController', 'index');
 $router->get('/dang-ky/moi',              'DangKyController', 'create');
 $router->post('/dang-ky/store',           'DangKyController', 'store');
 $router->get('/dang-ky/huy/:id',          'DangKyController', 'delete');
-
+$router->get('/thoi-khoa-bieu', 'ThoiKhoaBieuController', 'index');
 $router->dispatch();
