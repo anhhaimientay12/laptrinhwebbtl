@@ -122,19 +122,17 @@ CREATE TABLE diem_so (
 ) ENGINE=InnoDB;
 -- Bảng Lịch học (chi tiết)
 CREATE TABLE lich_hoc (
-    id             INT AUTO_INCREMENT PRIMARY KEY,
-    ma_lop         VARCHAR(20)  NOT NULL,
-    ma_gv          VARCHAR(10)  DEFAULT NULL,
-    thu            TINYINT      NOT NULL COMMENT '2=Thứ 2, 3=Thứ 3,..., 8=Chủ nhật',
-    tiet_bat_dau   TINYINT      NOT NULL COMMENT 'Tiết bắt đầu (1-12)',
-    so_tiet        TINYINT      NOT NULL DEFAULT 2 COMMENT 'Số tiết học',
-    phong_hoc      VARCHAR(20)  NOT NULL,
-    tuan_bat_dau   INT          DEFAULT 1 COMMENT 'Tuần bắt đầu (1-15)',
-    tuan_ket_thuc  INT          DEFAULT 15 COMMENT 'Tuần kết thúc',
-    created_at     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (ma_lop) REFERENCES lop_hoc_phan(ma_lop) ON DELETE CASCADE,
-    INDEX idx_lich (thu, tiet_bat_dau, phong_hoc)
-) ENGINE=InnoDB;
+  id      INT AUTO_INCREMENT PRIMARY KEY,
+  ma_lop  varchar(20) NOT NULL,
+  ma_gv   varchar(10) DEFAULT NULL,
+  thu tinyint(4) NOT NULL COMMENT '2=Thứ 2, 3=Thứ 3, 4=Thứ 4, 5=Thứ 5, 6=Thứ 6, 7=Thứ 7, 8=Chủ nhật',
+  tiet_bat_dau tinyint(4) NOT NULL COMMENT 'Tiết bắt đầu (1-12)',
+  so_tiet tinyint(4) NOT NULL DEFAULT 2,
+  phong_hoc varchar(20) NOT NULL,
+  tuan_bat_dau int(11) DEFAULT 1,
+  tuan_ket_thuc int(11) DEFAULT 15,
+  created_at timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Bảng cấu hình học kỳ (quản lý thời gian đăng ký, tuần học)
 CREATE TABLE hoc_ky_config (
